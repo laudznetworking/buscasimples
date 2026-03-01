@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!--
+    favicon.svg — Ícone de exemplo para BuscaFIERGS
+    Substitua este arquivo pelo ícone definitivo do seu projeto.
+    Tamanho recomendado: 32x32 ou 64x64 px.
+    Para converter em .ico, use: https://favicon.io/favicon-converter/
+  -->
+
+  <!-- Fundo com gradiente vermelho -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7f1d1d"/>
+      <stop offset="100%" stop-color="#1e1e2e"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Quadrado arredondado de fundo -->
+  <rect width="32" height="32" rx="6" fill="url(#bg)"/>
+
+  <!-- Letra "V" estilizada (Vetorial) -->
+  <text
+    x="16" y="23"
+    text-anchor="middle"
+    font-family="'Outfit', 'Arial Black', sans-serif"
+    font-size="20"
+    font-weight="900"
+    fill="#ef4444"
+    opacity="0.95"
+  >V</text>
+
+  <!-- Ponto de sinal no canto superior direito -->
+  <circle cx="25" cy="7" r="3" fill="#ef4444" opacity="0.8"/>
+</svg>

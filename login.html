@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BuscaFIERGS — Acesso</title>
+
+    <!-- Favicon: substitua pelo ícone definitivo do projeto -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- Tailwind CDN (utilitários) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome (ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Estilos compartilhados (fontes, glass-card, animações, etc.) -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="text-slate-100 min-h-screen antialiased">
+
+    <!-- Efeito scanlines de monitor antigo -->
+    <div class="scanlines"></div>
+
+    <!-- Terminal fictício decorativo ao fundo -->
+    <div id="terminal-bg"
+         class="absolute inset-0 p-8 overflow-hidden pointer-events-none opacity-[0.15]
+                font-ip text-[11px] leading-loose text-red-500 z-0">
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         TELA DE LOGIN
+    ═══════════════════════════════════════════════════════════════════════ -->
+    <div id="loginScreen"
+         class="flex flex-col items-center justify-center min-h-screen p-4 relative overflow-hidden z-10">
+
+        <!-- Blobs de fundo decorativos -->
+        <div class="absolute w-[600px] h-[600px] bg-red-900/15 rounded-full blur-[150px] top-0 left-0
+                    animate-pulse mix-blend-screen pointer-events-none"></div>
+        <div class="absolute w-[400px] h-[400px] bg-blue-900/10 rounded-full blur-[120px] bottom-0 right-0
+                    mix-blend-screen pointer-events-none"></div>
+
+        <!-- Cartão principal -->
+        <div class="glass-card p-12 rounded-lg w-full max-w-md relative z-10 animate-[fadeIn_0.8s_ease-out]">
+
+            <!-- Logo + Título -->
+            <div class="text-center mb-10">
+                <div class="relative inline-block animate-[float_4s_ease-in-out_infinite]">
+                    <div class="absolute inset-0 bg-red-600 blur-[40px] opacity-30 animate-pulse"></div>
+                    <div class="relative bg-gradient-to-br from-[#1a0505] to-[#450a0a] w-32 h-32 rounded-lg
+                                flex items-center justify-center mx-auto mb-8
+                                shadow-[0_0_30px_rgba(239,68,68,0.15)] border border-red-500/20 overflow-hidden">
+                        <img src="https://static.wixstatic.com/media/1eccce_033571f75dd94c889047ae85c8c41683~mv2.png/v1/fill/w_180,h_127,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/1eccce_033571f75dd94c889047ae85c8c41683~mv2.png"
+                             alt="Logo Vetorial"
+                             class="w-24 object-contain drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
+                    </div>
+                </div>
+
+                <h1 class="text-4xl font-black tracking-tight text-white uppercase text-center drop-shadow-lg">
+                    Busca<span class="text-red-600 font-light">FIERGS</span>
+                    <span class="text-red-600/50 text-xl font-ip align-top">v1.1</span>
+                </h1>
+                <p class="text-slate-400 text-[10px] uppercase tracking-[0.5em] font-bold mt-4">
+                    Acesso Restrito ao Suporte
+                </p>
+            </div>
+
+            <!-- Formulário de login -->
+            <div class="space-y-6">
+                <!-- Campo: e-mail / usuário -->
+                <div class="relative">
+                    <i class="fas fa-user absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                    <input type="text" id="userInput"
+                           placeholder="Credencial de Acesso"
+                           class="w-full bg-black/40 border border-white/10 py-4 px-12 rounded
+                                  outline-none red-glow-input transition-all text-sm text-white
+                                  placeholder-slate-600 font-ip"
+                           autocomplete="username">
+                </div>
+
+                <!-- Campo: senha -->
+                <div class="relative">
+                    <i class="fas fa-lock absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                    <input type="password" id="passInput"
+                           placeholder="Código de Segurança"
+                           class="w-full bg-black/40 border border-white/10 py-4 px-12 rounded
+                                  outline-none red-glow-input transition-all text-sm text-white
+                                  placeholder-slate-600 font-ip"
+                           autocomplete="current-password">
+                </div>
+
+                <!-- Botão: autenticar -->
+                <button id="btnLogin"
+                        class="btn-modern w-full bg-gradient-to-r from-red-700 to-red-600
+                               hover:from-red-600 hover:to-red-500 py-4 rounded font-black text-white
+                               shadow-[0_10px_30px_rgba(239,68,68,0.3)] uppercase tracking-widest text-xs mt-4">
+                    Autenticar Sessão <i class="fas fa-arrow-right ml-2 opacity-70"></i>
+                </button>
+
+                <!-- Divisor -->
+                <div class="flex items-center gap-4 mt-2">
+                    <div class="flex-1 h-px bg-white/5"></div>
+                    <span class="text-slate-600 text-[10px] uppercase tracking-widest font-bold">ou</span>
+                    <div class="flex-1 h-px bg-white/5"></div>
+                </div>
+
+                <!-- Botão: criar conta -->
+                <button id="btnAbrirCadastro"
+                        class="btn-modern w-full bg-transparent border border-white/10
+                               hover:border-red-500/40 hover:bg-red-500/5 py-4 rounded font-black
+                               text-slate-400 hover:text-white uppercase tracking-widest text-xs transition-all">
+                    <i class="fas fa-user-plus mr-2 opacity-70"></i> Criar Nova Conta
+                </button>
+            </div>
+        </div>
+
+        <!-- Rodapé -->
+        <div class="mt-16 text-center z-10 animate-[fadeIn_1.2s_ease-out]">
+            <div class="inline-flex items-center gap-5 px-8 py-3 bg-black/40 backdrop-blur-xl
+                        border border-white/5 rounded shadow-2xl">
+                <span class="text-slate-500 text-[9px] uppercase tracking-[0.4em] font-bold">Desenvolvido por</span>
+                <div class="h-4 w-[2px] bg-gradient-to-b from-red-600 to-transparent"></div>
+                <span class="text-red-500 font-black tracking-widest text-sm uppercase">Endrew</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         TELA DE LOADING (usada pelo login e pela transição de sessão)
+    ═══════════════════════════════════════════════════════════════════════ -->
+    <!--
+        BUG CORRIGIDO: O original tinha style="display:none; opacity:1;"
+        A opacidade é irrelevante quando display=none e a animação de transição
+        nunca funcionava. Agora usamos apenas display:none como estado inicial.
+    -->
+    <div id="loadingScreen"
+         style="display:none;"
+         class="fixed inset-0 bg-[#050505]/98 backdrop-blur-xl flex flex-col
+                items-center justify-center z-[500] transition-opacity duration-300">
+
+        <!-- Spinner animado -->
+        <div class="relative w-20 h-20 flex items-center justify-center mb-6">
+            <div class="absolute inset-0 border-4 border-red-600/20 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+            <i class="fas fa-satellite-dish text-red-500 animate-pulse text-xl"></i>
+        </div>
+
+        <!-- Texto de status -->
+        <p id="loadingText"
+           class="text-red-500 font-ip animate-pulse tracking-[0.3em] uppercase text-sm font-bold mb-6">
+            Sincronizando Datacenter
+        </p>
+
+        <!-- Janela de logs de carregamento -->
+        <div class="w-80 md:w-96 h-32 bg-black/50 border border-white/5 rounded-sm p-4
+                    overflow-hidden relative shadow-[inset_0_0_20px_rgba(0,0,0,0.8)]">
+            <div id="loadingLogs"
+                 class="flex flex-col justify-end h-full space-y-2 font-ip text-[10px] md:text-xs">
+            </div>
+            <!-- Fade superior para simular scroll de log -->
+            <div class="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b
+                        from-black/50 to-transparent pointer-events-none"></div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         MODAL: CRIAR NOVA CONTA
+    ═══════════════════════════════════════════════════════════════════════ -->
+    <div id="modalCadastroUsuario"
+         class="hidden fixed inset-0 bg-[#050505]/95 backdrop-blur-md flex
+                items-center justify-center z-[600] p-4">
+        <div class="glass-card w-full max-w-md rounded-lg border border-white/10
+                    shadow-[0_0_50px_rgba(0,0,0,0.8)]">
+
+            <!-- Cabeçalho do modal -->
+            <div class="flex justify-between items-center px-8 py-5 border-b border-white/5">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-user-plus text-red-500"></i>
+                    <h3 class="text-white font-black uppercase tracking-widest text-sm">Nova Conta</h3>
+                </div>
+                <button id="btnFecharCadastro"
+                        class="text-slate-500 hover:text-red-400 transition-colors w-8 h-8
+                               flex items-center justify-center rounded-sm hover:bg-white/5">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Formulário — passo 1: dados -->
+            <div class="p-8">
+                <div id="step1Cadastro" class="space-y-5 animate-[fadeIn_0.3s_ease-out]">
+                    <div class="relative">
+                        <i class="fas fa-envelope absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                        <input type="email" id="novoEmail" placeholder="E-mail corporativo"
+                               class="w-full bg-black/40 border border-white/10 py-4 px-12 rounded
+                                      outline-none red-glow-input transition-all text-sm text-white
+                                      placeholder-slate-600 font-ip"
+                               autocomplete="email">
+                    </div>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                        <input type="password" id="novaSenha" placeholder="Senha (mín. 6 caracteres)"
+                               class="w-full bg-black/40 border border-white/10 py-4 px-12 rounded
+                                      outline-none red-glow-input transition-all text-sm text-white
+                                      placeholder-slate-600 font-ip"
+                               autocomplete="new-password">
+                    </div>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                        <input type="password" id="confirmarSenha" placeholder="Confirmar senha"
+                               class="w-full bg-black/40 border border-white/10 py-4 px-12 rounded
+                                      outline-none red-glow-input transition-all text-sm text-white
+                                      placeholder-slate-600 font-ip"
+                               autocomplete="new-password">
+                    </div>
+                    <div class="relative">
+                        <i class="fas fa-key absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                        <input type="text" id="codigoAutorizacao"
+                               placeholder="Código de Autorização da Equipe"
+                               class="w-full bg-black/40 border border-white/10 py-4 px-12 rounded
+                                      outline-none red-glow-input transition-all text-sm text-white
+                                      placeholder-slate-600 font-ip uppercase"
+                               autocomplete="off">
+                    </div>
+
+                    <button id="btnCriarConta"
+                            class="btn-modern w-full bg-gradient-to-r from-red-700 to-red-600
+                                   hover:from-red-600 hover:to-red-500 py-4 rounded font-black text-white
+                                   shadow-[0_10px_30px_rgba(239,68,68,0.2)] uppercase tracking-widest text-xs">
+                        Solicitar Acesso <i class="fas fa-paper-plane ml-2 opacity-70"></i>
+                    </button>
+
+                    <p class="text-center text-slate-600 text-[10px] font-ip">
+                        Já tem conta?
+                        <button id="btnVoltarLogin"
+                                class="text-red-500 hover:text-red-400 transition-colors font-bold">
+                            Fazer login
+                        </button>
+                    </p>
+                </div>
+
+                <!-- Passo 2: verificação OTP -->
+                <div id="step2Cadastro" class="hidden space-y-5 animate-[fadeIn_0.3s_ease-out]">
+                    <div class="text-center mb-6">
+                        <i class="fas fa-shield-check text-4xl text-emerald-500 mb-3
+                                  drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]"></i>
+                        <p class="text-sm text-slate-300 font-ip">
+                            Enviamos um código de segurança para:
+                        </p>
+                        <p id="emailConfirmacaoDisplay"
+                           class="text-emerald-400 font-bold text-xs mt-1 tracking-wider"></p>
+                    </div>
+
+                    <div class="relative">
+                        <i class="fas fa-key absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                        <input type="text" id="codigoOtp" placeholder="000000" maxlength="6"
+                               class="w-full bg-black/40 border border-white/10 py-4 px-12 rounded
+                                      outline-none text-emerald-400 focus:border-emerald-500/50
+                                      focus:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all
+                                      text-center text-2xl tracking-[0.5em] font-black font-ip placeholder-slate-700"
+                               autocomplete="one-time-code">
+                    </div>
+
+                    <button id="btnVerificarCodigo"
+                            class="btn-modern w-full bg-gradient-to-r from-emerald-600 to-emerald-500
+                                   hover:from-emerald-500 hover:to-emerald-400 py-4 rounded font-black text-white
+                                   shadow-[0_10px_30px_rgba(16,185,129,0.2)] uppercase tracking-widest text-xs">
+                        Validar Código <i class="fas fa-check-circle ml-2 opacity-70"></i>
+                    </button>
+                </div>
+
+                <!-- Área de feedback do cadastro -->
+                <div id="feedbackCadastro"
+                     class="hidden text-[11px] font-ip px-4 py-3 rounded border mt-5">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         JAVASCRIPT DA PÁGINA DE LOGIN
+    ═══════════════════════════════════════════════════════════════════════ -->
+    <script>
+        // ─── Configuração do Supabase ─────────────────────────────────────────────
+        // ATENÇÃO: A chave "anon" é pública por design do Supabase (row-level security),
+        // mas não a exponha em repositórios públicos sem RLS configurado.
+        const URL_BANCO = 'https://dxezyhrzlzvwraozsgen.supabase.co';
+        const KEY_BANCO = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR4ZXp5aHJ6bHp2d3Jhb3pzZ2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwNTEzNzIsImV4cCI6MjA4NzYyNzM3Mn0.8197orNkpw616BzlYq3BUK_zqp8MwFCmGnVkUDGH3L0';
+        const _supabase = supabase.createClient(URL_BANCO, KEY_BANCO);
+
+        // ─── Código de autorização para novas contas ──────────────────────────────
+        // Mude esta string para controlar quem pode se cadastrar
+        const CODIGO_SECRETO_EQUIPE = 'V&T0R14L2O26';
+
+        // ─── Variável temporária para fluxo de cadastro OTP ──────────────────────
+        let emailCadastroTemp = '';
+
+        // ─── Inicialização: checa sessão ativa e inicia terminal fictício ─────────
+        window.addEventListener('DOMContentLoaded', async () => {
+            iniciarTerminalFicticio();
+
+            // Se já há sessão ativa, redireciona direto para o sistema
+            const { data: { session } } = await _supabase.auth.getSession();
+            if (session) {
+                window.location.href = `index.html?email=${encodeURIComponent(session.user.email)}`;
+            }
+        });
+
+        // ─── Listeners dos botões ─────────────────────────────────────────────────
+        document.getElementById('btnLogin').addEventListener('click', tentarLogin);
+        document.getElementById('btnAbrirCadastro').addEventListener('click', abrirModalCadastro);
+        document.getElementById('btnFecharCadastro').addEventListener('click', fecharModalCadastro);
+        document.getElementById('btnVoltarLogin').addEventListener('click', fecharModalCadastro);
+        document.getElementById('btnCriarConta').addEventListener('click', criarNovaConta);
+        document.getElementById('btnVerificarCodigo').addEventListener('click', verificarCodigoConta);
+
+        // Enter nos campos de login também dispara autenticação
+        ['userInput', 'passInput'].forEach(id => {
+            document.getElementById(id).addEventListener('keypress', e => {
+                if (e.key === 'Enter') tentarLogin();
+            });
+        });
+
+        // ─── Login ────────────────────────────────────────────────────────────────
+        async function tentarLogin() {
+            const email = document.getElementById('userInput').value.trim();
+            const pass  = document.getElementById('passInput').value;
+
+            if (!email || !pass) {
+                alert('Preencha os dados de acesso!');
+                return;
+            }
+
+            const loadingScreen = document.getElementById('loadingScreen');
+            document.getElementById('loadingText').innerText = 'AUTENTICANDO SESSÃO';
+            document.getElementById('loadingLogs').innerHTML = '';
+            loadingScreen.style.display = 'flex';
+
+            adicionarLogCarregamento('Iniciando handshake criptografado com Supabase_Auth...', 'text-slate-400');
+            await new Promise(r => setTimeout(r, 600));
+
+            adicionarLogCarregamento('Validando hash de credenciais...', 'text-slate-400');
+            const { data, error } = await _supabase.auth.signInWithPassword({ email, password: pass });
+
+            if (!error) {
+                adicionarLogCarregamento('Acesso Concedido. Token JWT validado.', 'text-emerald-400 font-bold');
+                await new Promise(r => setTimeout(r, 500));
+                // Redireciona para a aplicação principal passando o e-mail como parâmetro
+                window.location.href = `index.html?email=${encodeURIComponent(data.user.email)}`;
+            } else {
+                adicionarLogCarregamento('ERRO: Credenciais inválidas ou acesso negado.', 'text-red-500 font-bold');
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                    alert('Acesso Negado!');
+                }, 1000);
+            }
+        }
+
+        // ─── Modal de Cadastro ────────────────────────────────────────────────────
+        function abrirModalCadastro() {
+            // Reseta para o passo 1
+            document.getElementById('step1Cadastro').classList.remove('hidden');
+            document.getElementById('step2Cadastro').classList.add('hidden');
+            document.getElementById('novoEmail').value         = '';
+            document.getElementById('novaSenha').value         = '';
+            document.getElementById('confirmarSenha').value    = '';
+            document.getElementById('codigoAutorizacao').value = '';
+            document.getElementById('codigoOtp').value         = '';
+            esconderFeedbackCadastro();
+            document.getElementById('modalCadastroUsuario').classList.remove('hidden');
+            document.getElementById('novoEmail').focus();
+        }
+
+        function fecharModalCadastro() {
+            document.getElementById('modalCadastroUsuario').classList.add('hidden');
+        }
+
+        // ─── Feedback visual ──────────────────────────────────────────────────────
+        function mostrarFeedbackCadastro(msg, tipo) {
+            const el = document.getElementById('feedbackCadastro');
+            const estilos = {
+                erro:    'text-red-400 border-red-500/30 bg-red-500/10',
+                sucesso: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
+                aviso:   'text-amber-400 border-amber-500/30 bg-amber-500/10',
+            };
+            el.className = `text-[11px] font-ip px-4 py-3 rounded-sm border mt-5 ${estilos[tipo] || estilos.aviso}`;
+            el.textContent = msg;
+            el.classList.remove('hidden');
+        }
+
+        function esconderFeedbackCadastro() {
+            document.getElementById('feedbackCadastro').classList.add('hidden');
+        }
+
+        // ─── Criação de conta (passo 1) ───────────────────────────────────────────
+        async function criarNovaConta() {
+            const email    = document.getElementById('novoEmail').value.trim();
+            const senha    = document.getElementById('novaSenha').value;
+            const confirma = document.getElementById('confirmarSenha').value;
+            // Força maiúsculo para comparar com o código secreto
+            const codAuth  = document.getElementById('codigoAutorizacao').value.trim().toUpperCase();
+            const btn      = document.getElementById('btnCriarConta');
+
+            // Validações front-end
+            if (!email || !senha || !confirma || !codAuth) {
+                return mostrarFeedbackCadastro('Preencha todos os campos.', 'aviso');
+            }
+            if (codAuth !== CODIGO_SECRETO_EQUIPE.toUpperCase()) {
+                mostrarFeedbackCadastro('Código de autorização inválido.', 'erro');
+                document.getElementById('codigoAutorizacao').focus();
+                return;
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                return mostrarFeedbackCadastro('Informe um e-mail válido.', 'erro');
+            }
+            if (senha.length < 6) {
+                return mostrarFeedbackCadastro('A senha deve ter no mínimo 6 caracteres.', 'erro');
+            }
+            if (senha !== confirma) {
+                mostrarFeedbackCadastro('As senhas não coincidem.', 'erro');
+                document.getElementById('confirmarSenha').focus();
+                return;
+            }
+
+            btn.disabled  = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch animate-spin mr-2"></i> Criando conta...';
+            esconderFeedbackCadastro();
+
+            const { error } = await _supabase.auth.signUp({ email, password: senha });
+
+            btn.disabled  = false;
+            btn.innerHTML = 'Solicitar Acesso <i class="fas fa-paper-plane ml-2 opacity-70"></i>';
+
+            if (error) {
+                const erros = {
+                    'User already registered':          'Este e-mail já está cadastrado.',
+                    'Password should be at least 6':    'A senha deve ter no mínimo 6 caracteres.',
+                    'Unable to validate email address': 'E-mail inválido.',
+                    'Signup is disabled':               'Cadastro desativado. Contate o administrador.',
+                };
+                return mostrarFeedbackCadastro(erros[error.message] || `Erro: ${error.message}`, 'erro');
+            }
+
+            // Sucesso: avança para passo 2 (OTP)
+            emailCadastroTemp = email;
+            document.getElementById('emailConfirmacaoDisplay').innerText = email;
+            document.getElementById('step1Cadastro').classList.add('hidden');
+            document.getElementById('step2Cadastro').classList.remove('hidden');
+            document.getElementById('codigoOtp').focus();
+            mostrarFeedbackCadastro('Código enviado! Verifique sua caixa de entrada (ou Spam).', 'sucesso');
+        }
+
+        // ─── Verificação OTP (passo 2) ────────────────────────────────────────────
+        async function verificarCodigoConta() {
+            const token = document.getElementById('codigoOtp').value.trim();
+            const btn   = document.getElementById('btnVerificarCodigo');
+
+            if (token.length !== 6) {
+                return mostrarFeedbackCadastro('Digite o código completo de 6 dígitos.', 'erro');
+            }
+
+            btn.disabled  = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch animate-spin mr-2"></i> Validando...';
+            esconderFeedbackCadastro();
+
+            const { error } = await _supabase.auth.verifyOtp({
+                email: emailCadastroTemp,
+                token,
+                type: 'signup'
+            });
+
+            btn.disabled  = false;
+            btn.innerHTML = 'Validar Código <i class="fas fa-check-circle ml-2 opacity-70"></i>';
+
+            if (error) {
+                return mostrarFeedbackCadastro('Código inválido ou expirado. Tente novamente.', 'erro');
+            }
+
+            mostrarFeedbackCadastro('Conta validada com sucesso! Redirecionando...', 'sucesso');
+            setTimeout(() => {
+                fecharModalCadastro();
+                // Preenche o campo de login com o e-mail confirmado para facilitar
+                document.getElementById('userInput').value = emailCadastroTemp;
+                document.getElementById('passInput').focus();
+            }, 2000);
+        }
+
+        // ─── Logs de carregamento (janela na tela de loading) ─────────────────────
+        function adicionarLogCarregamento(texto, cor = 'text-emerald-500') {
+            const container = document.getElementById('loadingLogs');
+            const linha     = document.createElement('div');
+            linha.className = `${cor} animate-[fadeInTerm_0.2s_ease-out]`;
+            const timestamp = new Date().toLocaleTimeString();
+            linha.innerHTML = `<span class="text-slate-600 mr-2">[${timestamp}]</span> ${texto}`;
+            container.appendChild(linha);
+            // Mantém apenas as 4 linhas mais recentes
+            while (container.childNodes.length > 4) {
+                container.removeChild(container.firstChild);
+            }
+        }
+
+        // ─── Terminal fictício decorativo do fundo ────────────────────────────────
+        const logsTecnicos = [
+            'INITIALIZING VETORIAL_OS v1.0.4...',
+            'CONNECTING TO SUPABASE_NODE_01... [OK]',
+            'ENCRYPTING SESSION HANDSHAKE... [AES-256]',
+            'FETCHING MPLS_ROUTING_TABLES...',
+            'HANDSHAKE PROTOCOL: SECURE',
+            'BYPASSING PROXY_FILTER... SUCCESS',
+            'LOADING INTERFACE_MODULES... 100%',
+            'TUNNEL_ESTABLISHED: PORT 4443',
+            'PINGING FORTIGATE_CLUSTER... [12ms]',
+            'DATABASE_SYNC: COMPLETE',
+            'MONITORING TRAFFIC: ACTIVE',
+            'ALGORITHM_LOAD: NEURAL_SEARCH_v2',
+            'SYSTEM_STATUS: NOMINAL',
+        ];
+
+        function iniciarTerminalFicticio() {
+            const bg = document.getElementById('terminal-bg');
+            setInterval(() => {
+                const line     = document.createElement('span');
+                line.className = 'term-line';
+                const msg      = logsTecnicos[Math.floor(Math.random() * logsTecnicos.length)];
+                line.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
+                bg.appendChild(line);
+                // Limita a 50 linhas para não vazar memória
+                if (bg.childNodes.length > 50) bg.removeChild(bg.childNodes[0]);
+                bg.scrollTop = bg.scrollHeight;
+            }, 600);
+        }
+    </script>
+</body>
+</html>
