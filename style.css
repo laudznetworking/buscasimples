@@ -1,0 +1,138 @@
+/*
+ * ============================================================
+ * BuscaFIERGS — Estilos Globais
+ * style.css · Compartilhado entre login.html e index.html
+ * ============================================================
+ *
+ * IMPORTANTE: O @import DEVE ser a primeira declaração do arquivo.
+ * Colocá-lo após qualquer regra CSS faz os browsers ignorarem
+ * a importação silenciosamente.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Outfit:wght@300;400;600;800;900&display=swap');
+
+/* ── Fundo padrão: Modo FIERGS (vermelho) ───────────────────────────────────── */
+body {
+    font-family: 'Outfit', sans-serif;
+    background: radial-gradient(circle at top right, #3a0808 0%, #0f172a 40%, #050505 100%);
+    background-attachment: fixed;
+    transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Fundo alternativo: Modo Mikrotik (azul) ────────────────────────────────── */
+body.mode-mikrotik {
+    background: radial-gradient(circle at top right, #08123a 0%, #0f172a 40%, #050505 100%);
+}
+
+/* ── Efeito scanlines (monitor de tubo) ─────────────────────────────────────── */
+.scanlines {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0), rgba(255,255,255,0) 50%,
+        rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1)
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0.4;
+}
+
+/* ── Cartão com efeito de vidro ─────────────────────────────────────────────── */
+.glass-card {
+    background: linear-gradient(160deg, rgba(15, 23, 42, 0.85) 0%, rgba(5, 5, 5, 0.92) 100%);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    border-left: 1px solid rgba(255, 255, 255, 0.04);
+    box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255,255,255,0.04);
+    transition: all 0.25s ease;
+}
+
+/* Hover sóbrio — sobe levemente */
+.glass-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7);
+}
+
+/* Borda colorida ao hover por modo */
+.card-fiergs:hover   { border-left-color: rgba(239, 68, 68, 0.7);  box-shadow: 0 8px 32px rgba(0,0,0,0.6), inset 2px 0 0 rgba(239,68,68,0.3); }
+.card-mikrotik:hover { border-left-color: rgba(59, 130, 246, 0.7); box-shadow: 0 8px 32px rgba(0,0,0,0.6), inset 2px 0 0 rgba(59,130,246,0.3); }
+
+/* ── Tag de Manutenção ──────────────────────────────────────────────────────── */
+.card-manutencao {
+    border-color: rgba(245, 158, 11, 0.4) !important;
+    border-left-color: rgba(245, 158, 11, 0.7) !important;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.8), inset 2px 0 0 rgba(245,158,11,0.25) !important;
+}
+.card-manutencao::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(245, 158, 11, 0.02);
+    pointer-events: none;
+}
+
+/* ── Glow nos inputs de busca ───────────────────────────────────────────────── */
+.red-glow-input:focus {
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.8) !important;
+    background: rgba(10, 0, 0, 0.9) !important;
+}
+.blue-glow-input:focus {
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.8) !important;
+    background: rgba(0, 5, 10, 0.9) !important;
+}
+
+/* ── Fonte monospace para IPs ───────────────────────────────────────────────── */
+.font-ip {
+    font-family: 'Fira Code', monospace;
+    letter-spacing: -0.5px;
+}
+
+/* ── Scrollbar minimalista ──────────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(239, 68, 68, 0.6); }
+
+/* ── Indicadores de status ──────────────────────────────────────────────────── */
+.status-pulse { width: 12px; height: 12px; border-radius: 50%; display: inline-block; background-color: #334155; }
+.online       { background-color: #10b981; box-shadow: 0 0 12px #10b981, inset 0 0 4px rgba(255,255,255,0.5); }
+.offline      { background-color: #ef4444; box-shadow: 0 0 12px #ef4444, inset 0 0 4px rgba(255,255,255,0.5); }
+.checking     { background-color: #f59e0b; box-shadow: 0 0 12px #f59e0b; animation: pulse 1s infinite; }
+
+/* ── Animações globais ──────────────────────────────────────────────────────── */
+@keyframes pulse   { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+@keyframes fadeIn  { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes float   { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+/* ── Terminal fictício do fundo ─────────────────────────────────────────────── */
+#terminal-bg {
+    /* Fade para baixo para suavizar o efeito */
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+    user-select: none;
+}
+
+/* Animação de entrada das linhas do terminal fictício */
+.term-line { display: block; animation: fadeInTerm 0.3s ease-out forwards; }
+
+@keyframes fadeInTerm {
+    from { opacity: 0; transform: translateX(-15px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Botões modernos ────────────────────────────────────────────────────────── */
+.btn-modern {
+    transition: all 0.2s ease;
+}
+.btn-modern:hover  { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+.btn-modern:active { transform: translateY(0px); }
+
+/* ── Abas do painel admin ───────────────────────────────────────────────────── */
+.admin-aba.ativa   { color: #fff; border-color: #ef4444; }
+.admin-aba.ativa i { color: #ef4444; }
+.admin-aba.inativa { color: #64748b; border-color: transparent; }
+.admin-aba.inativa:hover { color: #94a3b8; }
